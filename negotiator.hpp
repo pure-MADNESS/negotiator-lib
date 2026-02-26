@@ -27,6 +27,7 @@ class Negotiator{
     double _proposed_power = 0;
     double _covariance = 0;
     
+    map<int, double> _nodes_proposals;
 
     double _residual;
 
