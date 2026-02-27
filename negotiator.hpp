@@ -16,12 +16,13 @@ class Negotiator{
 
   public:
 
-    Negotiator();
+    Negotiator(){ }
+    Negotiator(double c);
     ~Negotiator();
 
     void set_covariance(double c) { _state._covariance = c; }
-    double get_covariance();
-    double get_proposed_power();
+    double get_covariance() const { return _state._covariance; }
+    double get_proposed_power() const { return _state._proposed_power; }
 
     void listen();
     void speak();
@@ -32,6 +33,7 @@ class Negotiator{
     Node_state _state;
     double _required_power = 0;
     double _residual;
+    int _id;
 
     map<int, Node_state> _nodes_states;
 
