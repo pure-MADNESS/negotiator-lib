@@ -23,6 +23,7 @@ class Negotiator{
     ~Negotiator();
 
     void set_covariance(double c) { _state._covariance = c; }
+    void set_required_power(double p) { _required_power = p; }
     double get_covariance() const { return _state._covariance; }
     double get_proposed_power() const { return _state._proposed_power; }
 
@@ -34,6 +35,7 @@ class Negotiator{
 
     Node_state _state;
     double _required_power = 0;
+    double _p_max = 0.0;
     double _residual;
     int _id;
 

@@ -47,6 +47,20 @@ json Negotiator::speak(){
 
 void Negotiator::update_proposal(){
 
+  double tot_proposal = _state._proposed_power;
+  double tot_weight = 1.0 / _state._covariance;
 
+  for(auto const &[id, state] : _nodes_states){
+
+    tot_proposal += state._proposed_power;
+    tot_weight += 1.0 / state._covariance;
+  }
+
+  double err = _required_power - tot_proposal;
+  double weight = 1.0 / _state._covariance;
+
+  double correction = (weight / tot_weight) * err;
+  _state._proposed_power += correction;
+  _state._proposed_power = std::clamp(_state._proposed_power, 0.0, _p_max);
   
 }
