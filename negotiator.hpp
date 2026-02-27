@@ -3,6 +3,9 @@
 #include <nlohmann/json.hpp>
 #include <string.h>
 #include <iostream>
+#include <deque>
+
+#define BUFFER_SIZE 10
 
 using namespace std;
 using json = nlohmann::json;
@@ -10,7 +13,6 @@ using json = nlohmann::json;
 struct Node_state{
   double _proposed_power = 0.0;
   double _covariance = 0.0;
-  // double _ergodic_weight = 1.0;
 };
 
 
@@ -26,11 +28,14 @@ class Negotiator{
     void set_required_power(double p) { _required_power = p; }
     double get_covariance() const { return _state._covariance; }
     double get_proposed_power() const { return _state._proposed_power; }
+    double get_ergodic_penalty() const { return _ergodic_weight; }
     void set_weather_flag(bool f) { _weather_flag = f; } // mah, probabilmente può farlo direttamente il nodo senza che se lo gestisca il negoziatore
 
     void listen(json const &input);
     json speak();
     void update_proposal();
+
+    void update_queue(double new_power);
 
   private:
 
@@ -46,7 +51,8 @@ class Negotiator{
     bool _weather_flag = true;
 
     map<string, Node_state> _nodes_states;
-
+    deque<double> _buffer_power;
+    double _temporal_sum = 0.0;
 };
 
 

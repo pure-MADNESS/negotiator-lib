@@ -20,14 +20,12 @@ void Negotiator::listen(json const &input){
   if(iter != _nodes_states.end()){
     iter -> second._proposed_power = input.at("state").at("proposed_power").get<double>();
     iter -> second._proposed_power = input.at("state").at("covariance").get<double>();
-    // iter -> second._ergodic_weight = input.at("state").at("ergodic_weight").get<double>();
   
   } else{
 
     Node_state new_state;
     new_state._proposed_power = input.at("state").at("proposed_power").get<double>();
     new_state._covariance = input.at("state").at("covariance").get<double>();
-    // new_state._ergodic_weight = input.at("state").at("ergodic_weight").get<double>();
 
     _nodes_states[tmp_id] = new_state;
   }
@@ -40,7 +38,6 @@ json Negotiator::speak(){
 
   out["state"]["proposed_power"] = _state._proposed_power;
   out["state"]["covariance"] = _state._covariance;
-  // out["state"]["ergodic_weight"] = _state._ergodic_weight;
 
   return out;
 }
@@ -57,14 +54,47 @@ void Negotiator::update_proposal(){
   }
 
   double err = _required_power - tot_proposal;
-  double weight = (1.0 / _state._covariance) * _ergodic_weight;
+  double weight = (1.0 / _state._covariance);
 
   if(_weather_flag){
-    weight = weight * _weather_weight;
+    // weight = weight * _weather_weight;
   }
 
   double correction = (weight / tot_weight) * err;
   _state._proposed_power += correction;
   _state._proposed_power = std::clamp(_state._proposed_power, 0.0, _p_max);
+
+}
+
+
+void Negotiator::update_queue(double new_power){
+
+  _buffer_power.push_back(new_power);
+  _temporal_sum += new_power;
+
+  if(_buffer_power.size() > BUFFER_SIZE){
+
+    _temporal_sum -= _buffer_power.front();
+    _buffer_power.pop_front();  // fifo like
+  }
+
+  // ergodicity check
+  if(_buffer_power.empty()){
+
+    _ergodic_weight = 1.0;
+  
+  } else{
+
+    double m = _temporal_sum / _buffer_power.size();
+    double ergodic_err = abs(m - _state._proposed_power);
+
+    double threshold = _p_max * 0.2;
+    if(ergodic_err > threshold){
+
+      // in base all'errore ergodico, modifichiamo la R delle misurazioni in modo da fidarci sempre meno e alzare la covarianza
+      // first try: errore quadratico
+      _ergodic_weight = 1.0 + (pow(ergodic_err - threshold, 2) * 10.0);
+    }
+  }
 
 }
