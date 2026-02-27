@@ -1,6 +1,8 @@
 #ifndef __NEGOTIATOR_HPP__
 
 #include <nlohmann/json.hpp>
+#include <string.h>
+#include <iostream>
 
 using namespace std;
 using json = nlohmann::json;
@@ -24,8 +26,8 @@ class Negotiator{
     double get_covariance() const { return _state._covariance; }
     double get_proposed_power() const { return _state._proposed_power; }
 
-    void listen();
-    void speak();
+    void listen(json const &input);
+    json speak();
     void update_proposal();
 
   private:
@@ -35,7 +37,7 @@ class Negotiator{
     double _residual;
     int _id;
 
-    map<int, Node_state> _nodes_states;
+    map<string, Node_state> _nodes_states;
 
 };
 
