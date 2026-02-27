@@ -5,6 +5,12 @@
 using namespace std;
 using json = nlohmann::json;
 
+struct Node_state{
+  double _proposed_power = 0.0;
+  double _covariance = 0.0;
+  double _ergodic_weight = 0.0;
+};
+
 
 class Negotiator{
 
@@ -13,7 +19,7 @@ class Negotiator{
     Negotiator();
     ~Negotiator();
 
-    void set_covariance(double c) { _covariance = c; }
+    void set_covariance(double c) { _state._covariance = c; }
     double get_covariance();
     double get_proposed_power();
 
@@ -23,13 +29,11 @@ class Negotiator{
 
   private:
 
+    Node_state _state;
     double _required_power = 0;
-    double _proposed_power = 0;
-    double _covariance = 0;
-    
-    map<int, double> _nodes_proposals;
-
     double _residual;
+
+    map<int, Node_state> _nodes_states;
 
 };
 
