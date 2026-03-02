@@ -20,7 +20,7 @@ class Negotiator{
 
   public:
 
-    Negotiator(){ }
+    Negotiator() = delete;
     Negotiator(const double &c, const double &p);
     ~Negotiator();
 
