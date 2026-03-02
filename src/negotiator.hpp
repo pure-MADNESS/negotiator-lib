@@ -31,7 +31,7 @@ class Negotiator{
     double get_ergodic_penalty() const { return _ergodic_weight; }
     void set_weather_flag(bool f) { _weather_flag = f; } // mah, probabilmente può farlo direttamente il nodo senza che se lo gestisca il negoziatore
 
-    void listen(json const &input);
+    void listen(json const &input, string topic);
     json speak();
     void update_proposal();
 

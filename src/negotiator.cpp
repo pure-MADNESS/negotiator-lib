@@ -10,14 +10,18 @@ Negotiator::~Negotiator(){
   cerr << "node [" << _id << "] left the party" << endl; 
 }
 
-void Negotiator::listen(json const &input){
+void Negotiator::listen(json const &input, string topic){
+
+  if(topic.rfind("source", 0) != 0) {
+    return; // listen just sources
+  }
 
   string tmp_id = input.at("_id").get<string>();
   bool presence_flag = false;
 
   auto iter = _nodes_states.find(tmp_id);
 
-  if(iter != _nodes_states.end()){
+  if(iter != _nodes_states.end() && input.contains("state")){
     iter -> second._proposed_power = input.at("state").at("proposed_power").get<double>();
     iter -> second._proposed_power = input.at("state").at("covariance").get<double>();
   
