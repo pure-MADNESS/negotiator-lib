@@ -20,7 +20,7 @@ class Negotiator{
 
   public:
 
-    Negotiator() = delete;
+    Negotiator() : _covariance(0.0), _p_max(0.0) {}
     Negotiator(const double &c, const double &p);
     ~Negotiator();
 
