@@ -10,11 +10,10 @@
 using namespace std;
 using json = nlohmann::json;
 
-struct Node_state{
-  double _proposed_power = 0.0;
-  double _covariance = 0.0;
-};
-
+  struct Node_state{
+    double _proposed_power = 0.0;
+    double _covariance = 0.0;
+  };
 
 class Negotiator{
 
@@ -24,12 +23,13 @@ class Negotiator{
     Negotiator(double c);
     ~Negotiator();
 
-    void set_covariance(double c) { _state._covariance = c; }
-    void set_required_power(double p) { _required_power = p; }
+    bool get_stab_flag() const { return _local_stab_flag; }
     double get_covariance() const { return _state._covariance; }
     double get_proposed_power() const { return _state._proposed_power; }
     double get_ergodic_penalty() const { return _ergodic_weight; }
     void set_weather_flag(bool f) { _weather_flag = f; } // mah, probabilmente può farlo direttamente il nodo senza che se lo gestisca il negoziatore
+    void set_covariance(double c) { _state._covariance = c; }
+    void set_required_power(double p) { _required_power = p; }
 
     void listen(json const &input, string topic);
     json speak();
@@ -38,6 +38,9 @@ class Negotiator{
     void update_queue(double new_power);
 
   private:
+
+    const int _threshold = 0.01;
+    bool _local_stab_flag = false;
 
     Node_state _state;
     double _required_power = 0;

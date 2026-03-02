@@ -23,7 +23,7 @@ void Negotiator::listen(json const &input, string topic){
 
   if(iter != _nodes_states.end() && input.contains("state")){
     iter -> second._proposed_power = input.at("state").at("proposed_power").get<double>();
-    iter -> second._proposed_power = input.at("state").at("covariance").get<double>();
+    iter -> second._covariance = input.at("state").at("covariance").get<double>();
   
   } else{
 
@@ -48,6 +48,8 @@ json Negotiator::speak(){
 
 void Negotiator::update_proposal(){
 
+  double prev_proposal = _state._proposed_power;
+
   double tot_proposal = _state._proposed_power;
   double tot_weight = 1.0 / _state._covariance;
 
@@ -67,6 +69,11 @@ void Negotiator::update_proposal(){
   double correction = (weight / tot_weight) * err;
   _state._proposed_power += correction;
   _state._proposed_power = std::clamp(_state._proposed_power, 0.0, _p_max);
+
+  if(abs(prev_proposal - _state._proposed_power) < _threshold){
+
+    _local_stab_flag = true;
+  }
 
 }
 
