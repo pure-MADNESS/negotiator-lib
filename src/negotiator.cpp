@@ -1,9 +1,6 @@
 #include "negotiator.hpp"
 
-Negotiator::Negotiator(double c){
-
-  set_covariance(c);
-}
+Negotiator::Negotiator(const double &c, const double &p) : _covariance(c), _p_max(p) {}
 
 Negotiator::~Negotiator(){
 
@@ -40,18 +37,18 @@ json Negotiator::speak(){
   json out;
   out.clear();
 
-  out["state"]["proposed_power"] = _state._proposed_power;
-  out["state"]["covariance"] = _state._covariance;
+  out["state"]["proposed_power"] = _proposed_power;
+  out["state"]["covariance"] = _covariance;
 
   return out;
 }
 
 void Negotiator::update_proposal(){
 
-  double prev_proposal = _state._proposed_power;
+  double prev_proposal = _proposed_power;
 
-  double tot_proposal = _state._proposed_power;
-  double tot_weight = 1.0 / _state._covariance;
+  double tot_proposal = _proposed_power;
+  double tot_weight = 1.0 / _covariance;
 
   for(auto const &[id, state] : _nodes_states){
 
@@ -60,17 +57,17 @@ void Negotiator::update_proposal(){
   }
 
   double err = _required_power - tot_proposal;
-  double weight = (1.0 / _state._covariance);
+  double weight = (1.0 / _covariance);
 
   if(_weather_flag){
     // weight = weight * _weather_weight;
   }
 
   double correction = (weight / tot_weight) * err;
-  _state._proposed_power += correction;
-  _state._proposed_power = std::clamp(_state._proposed_power, 0.0, _p_max);
+  _proposed_power += correction;
+  _proposed_power = std::clamp(_proposed_power, 0.0, _p_max);
 
-  if(abs(prev_proposal - _state._proposed_power) < _threshold){
+  if(abs(prev_proposal - _proposed_power) < _threshold){
 
     _local_stab_flag = true;
   }
@@ -97,7 +94,7 @@ void Negotiator::update_queue(double new_power){
   } else{
 
     double m = _temporal_sum / _buffer_power.size();
-    double ergodic_err = abs(m - _state._proposed_power);
+    double ergodic_err = abs(m - _proposed_power);
 
     double threshold = _p_max * 0.2;
     if(ergodic_err > threshold){
