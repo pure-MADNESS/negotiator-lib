@@ -39,7 +39,7 @@ class Negotiator{
 
   private:
 
-    const int _threshold = 0.01;
+    const double _threshold = 0.01;
     bool _local_stab_flag = false;
 
     Node_state _state;
