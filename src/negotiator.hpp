@@ -22,7 +22,6 @@ class Negotiator{
 
     Negotiator(){ }
     Negotiator(const double &c, const double &p);
-    Negotiator();
     ~Negotiator();
 
     bool get_stab_flag() const { return _local_stab_flag; }
@@ -44,8 +43,8 @@ class Negotiator{
 
     double _proposed_power = 0.0;
     double _required_power = 0;
-    const  double &_p_max = 0.0;
-    const double &_covariance = 0.0;
+    const  double &_p_max;
+    const double &_covariance;
 
     double _weather_weight = 1.0;
     double _ergodic_weight = 1.0;
