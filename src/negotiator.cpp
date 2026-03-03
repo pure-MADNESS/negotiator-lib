@@ -11,43 +11,52 @@ void Negotiator::listen(json const &input, string topic){
 
   string tmp_id = input.at("_id").get<string>();
 
+  // if source node
   if(topic.rfind("source", 0) == 0){
 
     auto iter_sources = _nodes_states.find(tmp_id);
+    auto now = steady_clock::now();
 
     if(iter_sources != _nodes_states.end() && input.contains("state")){
 
       iter_sources -> second._proposed_power = input.at("state").at("proposed_power").get<double>();
       iter_sources -> second._covariance = input.at("state").at("covariance").get<double>();
+      iter_sources -> second._last_active = now;
     
     } else{
 
-      Node_state new_state;
+      Source_state new_state;
       new_state._proposed_power = input.at("state").at("proposed_power").get<double>();
       new_state._covariance = input.at("state").at("covariance").get<double>();
+      new_state._last_active = now;
 
       _nodes_states[tmp_id] = new_state;
     }
   
+  // if load node
   } else if(topic.rfind("load", 0) == 0){
 
     auto iter_loads = _loads_requests.find(tmp_id);
+    auto now = steady_clock::now();
 
     if(iter_loads != _loads_requests.end() && input.contains("request")){
 
-      iter_loads -> second = input.at("load").at("request").get<double>();
+      iter_loads -> second._required_power = input.at("load").at("request").get<double>();
+      iter_loads -> second._last_active = now;
       
     } else{
 
-      _loads_requests[tmp_id] = input.at("load").at("request").get<double>();
+      Load_state new_state;
+      new_state._required_power = input.at("load").at("request").get<double>();
+      new_state._last_active = now;
+
+      _loads_requests[tmp_id] = new_state;
     }
 
   } else{
 
     return;
   }
-
-  
 }
 
 json Negotiator::speak(){

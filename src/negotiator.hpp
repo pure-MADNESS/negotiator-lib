@@ -4,17 +4,28 @@
 #include <string.h>
 #include <iostream>
 #include <deque>
+#include <chrono>
 
 #define BUFFER_SIZE 10
+#define TIME_SLEEP 
 
 using namespace std;
 using json = nlohmann::json;
+using namespace chrono;
 
-  struct Node_state{ // mainly for neighboors
-    double _proposed_power = 0.0;
-    double _covariance;
-    
-  };
+struct Source_state{ // mainly for neighboors
+  double _proposed_power = 0.0;
+  double _covariance;
+
+  // activation time
+  steady_clock::time_point _last_active;    
+};
+
+
+struct Load_state{
+  double _required_power = 0.0;
+  steady_clock::time_point _last_active; 
+}
 
 class Negotiator{
 
@@ -54,8 +65,8 @@ class Negotiator{
 
     bool _weather_flag = true;
 
-    map<string, Node_state> _nodes_states;
-    map<string, double> _loads_requests;
+    map<string, Source_state> _nodes_states;
+    map<string, Load_state> _loads_requests;
     deque<double> _buffer_power;
     double _temporal_sum = 0.0;
 };
