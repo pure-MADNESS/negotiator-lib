@@ -9,27 +9,45 @@ Negotiator::~Negotiator(){
 
 void Negotiator::listen(json const &input, string topic){
 
-  if(topic.rfind("source", 0) != 0) {
-    return; // listen just sources
-  }
-
   string tmp_id = input.at("_id").get<string>();
-  bool presence_flag = false;
 
-  auto iter = _nodes_states.find(tmp_id);
+  if(topic.rfind("source", 0) == 0){
 
-  if(iter != _nodes_states.end() && input.contains("state")){
-    iter -> second._proposed_power = input.at("state").at("proposed_power").get<double>();
-    iter -> second._covariance = input.at("state").at("covariance").get<double>();
+    auto iter_sources = _nodes_states.find(tmp_id);
+
+    if(iter_sources != _nodes_states.end() && input.contains("state")){
+
+      iter_sources -> second._proposed_power = input.at("state").at("proposed_power").get<double>();
+      iter_sources -> second._covariance = input.at("state").at("covariance").get<double>();
+    
+    } else{
+
+      Node_state new_state;
+      new_state._proposed_power = input.at("state").at("proposed_power").get<double>();
+      new_state._covariance = input.at("state").at("covariance").get<double>();
+
+      _nodes_states[tmp_id] = new_state;
+    }
   
+  } else if(topic.rfind("load", 0) == 0){
+
+    auto iter_loads = _loads_requests.find(tmp_id);
+
+    if(iter_loads != _loads_requests.end() && input.contains("request")){
+
+      iter_loads -> second = input.at("load").at("request").get<double>();
+      
+    } else{
+
+      _loads_requests[tmp_id] = input.at("load").at("request").get<double>();
+    }
+
   } else{
 
-    Node_state new_state;
-    new_state._proposed_power = input.at("state").at("proposed_power").get<double>();
-    new_state._covariance = input.at("state").at("covariance").get<double>();
-
-    _nodes_states[tmp_id] = new_state;
+    return;
   }
+
+  
 }
 
 json Negotiator::speak(){

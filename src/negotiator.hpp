@@ -55,6 +55,7 @@ class Negotiator{
     bool _weather_flag = true;
 
     map<string, Node_state> _nodes_states;
+    map<string, double> _loads_requests;
     deque<double> _buffer_power;
     double _temporal_sum = 0.0;
 };
