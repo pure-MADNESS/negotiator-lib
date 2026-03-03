@@ -118,6 +118,11 @@ void Negotiator::update_proposal(){
 
   double prev_proposal = _proposed_power;
 
+  double total_demand = 0.0;
+  for(auto const &[id, load] : _loads_requests){
+    total_demand += load._required_power;
+  }
+
   double tot_proposal = _proposed_power;
   double tot_weight = 1.0 / _covariance;
 
@@ -127,7 +132,7 @@ void Negotiator::update_proposal(){
     tot_weight += 1.0 / state._covariance;
   }
 
-  double err = _required_power - tot_proposal;
+  double err = total_demand - tot_proposal;
   double weight = (1.0 / _covariance);
 
   if(_weather_flag){
