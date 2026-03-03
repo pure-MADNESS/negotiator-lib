@@ -70,7 +70,40 @@ json Negotiator::speak(){
   return out;
 }
 
+void Negotiator::clean_nodes(){
+
+  auto now = std::chrono::steady_clock::now();
+
+  // clean sources
+  for (auto it = _nodes_states.begin(); it != _nodes_states.end(); ) {
+      std::chrono::duration<double> diff = now - it->second._last_active;
+
+      if (diff.count() > TIME_SLEEP) {
+
+          it = _nodes_states.erase(it); // sleeping node
+
+      } else {
+          ++it;
+      }
+  }
+
+  // clean loads
+  for (auto it = _loads_requests.begin(); it != _loads_requests.end(); ) {
+      std::chrono::duration<double> diff = now - it->second._last_active;
+
+      if (diff.count() > TIME_SLEEP) {
+
+          it = _loads_requests.erase(it);
+
+      } else {
+          ++it;
+      }
+  }
+}
+
 void Negotiator::update_proposal(){
+
+  clean_nodes();
 
   double prev_proposal = _proposed_power;
 

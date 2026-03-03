@@ -7,7 +7,7 @@
 #include <chrono>
 
 #define BUFFER_SIZE 10
-#define TIME_SLEEP 
+#define TIME_SLEEP 60
 
 using namespace std;
 using json = nlohmann::json;
@@ -46,6 +46,7 @@ class Negotiator{
     void update_proposal();
 
     void update_queue(double new_power);
+    void clean_nodes();
 
   private:
 
