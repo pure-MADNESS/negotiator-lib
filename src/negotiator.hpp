@@ -1,3 +1,14 @@
+/*
+
+  _   _                  _   _       _                ____ _               
+ | \ | | ___  __ _  ___ | |_(_) __ _| |_ ___  _ __   / ___| | __ _ ___ ___ 
+ |  \| |/ _ \/ _` |/ _ \| __| |/ _` | __/ _ \| '__| | |   | |/ _` / __/ __|
+ | |\  |  __/ (_| | (_) | |_| | (_| | || (_) | |    | |___| | (_| \__ \__ \
+ |_| \_|\___|\__, |\___/ \__|_|\__,_|\__\___/|_|     \____|_|\__,_|___/___/
+             |___/                                                         
+
+*/
+
 #ifndef __NEGOTIATOR_HPP__
 
 #include <nlohmann/json.hpp>
@@ -25,7 +36,7 @@ struct Source_state{ // mainly for neighboors
 struct Load_state{
   double _required_power = 0.0;
   steady_clock::time_point _last_active; 
-}
+};
 
 class Negotiator{
 
