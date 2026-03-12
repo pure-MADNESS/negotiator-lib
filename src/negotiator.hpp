@@ -42,7 +42,7 @@ class Negotiator{
 
   public:
 
-    Negotiator() = delete;
+    Negotiator() { };
     Negotiator(double c, double p);
     ~Negotiator();
 
