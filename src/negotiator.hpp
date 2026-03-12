@@ -69,8 +69,8 @@ class Negotiator{
 
     double _proposed_power = 0.0;
     double _required_power = 0;
-    double _p_max;
-    double _covariance;
+    double _p_max = 0.0;
+    double _covariance = 0.1;
 
     double _weather_weight = 1.0;
     double _ergodic_weight = 1.0;
