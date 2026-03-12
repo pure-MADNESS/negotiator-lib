@@ -11,7 +11,7 @@
 
 #include "negotiator.hpp"
 
-Negotiator::Negotiator(const double &c, const double &p) : _covariance(c), _p_max(p) {}
+Negotiator::Negotiator(double c, double p) : _covariance(c), _p_max(p) {}
 
 Negotiator::~Negotiator(){
 
@@ -77,6 +77,7 @@ json Negotiator::speak(){
 
   out["state"]["proposed_power"] = _proposed_power;
   out["state"]["covariance"] = _covariance;
+  out["state"]["p_max"] = _p_max;
 
   return out;
 }

@@ -43,8 +43,11 @@ class Negotiator{
   public:
 
     Negotiator() = delete;
-    Negotiator(const double &c, const double &p);
+    Negotiator(double c, double p);
     ~Negotiator();
+
+    void set_cov(double c) { _covariance = c; }
+    void set_pmax(double p) { _p_max = p; }
 
     bool get_stab_flag() const { return _local_stab_flag; }
     double get_proposed_power() const { return _proposed_power; }
@@ -66,8 +69,8 @@ class Negotiator{
 
     double _proposed_power = 0.0;
     double _required_power = 0;
-    const  double &_p_max;
-    const double &_covariance;
+    double _p_max;
+    double _covariance;
 
     double _weather_weight = 1.0;
     double _ergodic_weight = 1.0;
