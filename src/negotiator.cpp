@@ -20,7 +20,7 @@ Negotiator::~Negotiator(){
 
 void Negotiator::listen(json const &input, string topic){
 
-  string tmp_id = input.at("_id").get<string>();
+  string tmp_id = input.at("agent_id").get<string>();
 
   // if source node
   if(topic.rfind("source", 0) == 0){
