@@ -52,13 +52,13 @@ void Negotiator::listen(json const &input, string topic){
 
     if(iter_loads != _loads_requests.end() && input.contains("request")){
 
-      iter_loads -> second._required_power = input.at("load").at("request").get<double>();
+      iter_loads -> second._required_power = input.at("request").get<double>();
       iter_loads -> second._last_active = now;
       
     } else{
 
       Load_state new_state;
-      new_state._required_power = input.at("load").at("request").get<double>();
+      new_state._required_power = input.at("request").get<double>();
       new_state._last_active = now;
 
       _loads_requests[tmp_id] = new_state;
