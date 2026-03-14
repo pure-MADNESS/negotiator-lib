@@ -124,29 +124,33 @@ void Negotiator::update_proposal(){
     total_demand += load._required_power;
   }
 
-  double tot_proposal = _proposed_power;
   double tot_weight = 1.0 / _covariance;
-
   for(auto const &[id, state] : _nodes_states){
-
-    tot_proposal += state._proposed_power;
-    tot_weight += 1.0 / state._covariance;
+    tot_weight += (1.0 / state._covariance);
   }
 
-  double err = total_demand - tot_proposal;
-  double weight = (1.0 / _covariance);
+  double w = (1.0 / _covariance);
+
+  double target = (w / tot_weight) * total_demand;
 
   if(_weather_flag){
     // weight = weight * _weather_weight;
   }
 
-  double correction = (weight / tot_weight) * err;
+  double correction = 0.25 * (target - _proposed_power);
   _proposed_power += correction;
   _proposed_power = std::clamp(_proposed_power, 0.0, _p_max);
 
   if(abs(prev_proposal - _proposed_power) < _threshold){
 
+    if(!_local_stab_flag){
+      update_queue(_proposed_power);
+    }
+
     _local_stab_flag = true;
+  } else{
+
+    _local_stab_flag = false;
   }
 
 }

@@ -57,6 +57,16 @@ class Negotiator{
 
     void listen(json const &input, string topic);
     json speak();
+
+    /**
+     * 
+     * @brief CONSENSUS BALANCING:
+     * 
+     * Each node computes its own proposed power as the total demand P_demand scaled by a factor defined by the ratio between its own weight (1/_covariance) and the sum of the weights of all the other source nodes.
+     * 
+     * In this way, the total proposed power P_tot, given by the summation of all proposals, is given by the total demand P_demand scaled by the ratio between the summation of all weights and the summation of the same weights: the total demand scaled by 1.
+     * 
+     */
     void update_proposal();
 
     void update_queue(double new_power);
