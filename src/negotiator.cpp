@@ -20,12 +20,10 @@ Negotiator::~Negotiator(){
 
 void Negotiator::listen(json const &input, string topic){
 
-  string tmp_id = input.at("agent_id").get<string>();
-
   // if source node
   if(topic.rfind("source", 0) == 0){
 
-    auto iter_sources = _nodes_states.find(tmp_id);
+    auto iter_sources = _nodes_states.find(topic);
     auto now = steady_clock::now();
 
     if(iter_sources != _nodes_states.end() && input.contains("state")){
@@ -41,13 +39,13 @@ void Negotiator::listen(json const &input, string topic){
       new_state._covariance = input.at("state").at("covariance").get<double>();
       new_state._last_active = now;
 
-      _nodes_states[tmp_id] = new_state;
+      _nodes_states[topic] = new_state;
     }
   
   // if load node
   } else if(topic.rfind("load", 0) == 0){
 
-    auto iter_loads = _loads_requests.find(tmp_id);
+    auto iter_loads = _loads_requests.find(topic);
     auto now = steady_clock::now();
 
     if(iter_loads != _loads_requests.end() && input.contains("request")){
@@ -61,7 +59,7 @@ void Negotiator::listen(json const &input, string topic){
       new_state._required_power = input.at("request").get<double>();
       new_state._last_active = now;
 
-      _loads_requests[tmp_id] = new_state;
+      _loads_requests[topic] = new_state;
     }
 
   } else{
