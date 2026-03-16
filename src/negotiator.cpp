@@ -15,7 +15,7 @@ Negotiator::Negotiator(double c, double p) : _covariance(c), _p_max(p) {}
 
 Negotiator::~Negotiator(){
 
-  cerr << "node [" << _id << "] left the party" << endl; 
+  cerr << "node left the party" << endl; 
 }
 
 void Negotiator::listen(json const &input, string topic){
@@ -166,22 +166,38 @@ void Negotiator::update_queue(double new_power){
   }
 
   // ergodicity check
+  double ergodic_err = 0.0;
+  double m = 0.0;
+  double threshold = _p_max * 0.2;
+
   if(_buffer_power.empty()){
 
     _ergodic_weight = 1.0;
   
   } else{
 
-    double m = _temporal_sum / _buffer_power.size();
-    double ergodic_err = abs(m - _proposed_power);
+    m = _temporal_sum / _buffer_power.size();
+    ergodic_err = abs(m - _proposed_power);
 
-    double threshold = _p_max * 0.2;
     if(ergodic_err > threshold){
 
       // in base all'errore ergodico, modifichiamo la R delle misurazioni in modo da fidarci sempre meno e alzare la covarianza
       // first try: errore quadratico
       _ergodic_weight = 1.0 + (pow(ergodic_err - threshold, 2) * 10.0);
     }
+  }
+
+  m = _weather_mean;
+  ergodic_err = _proposed_power - m;
+  
+  // if i propose more power than what it's going to be
+  if(ergodic_err > threshold){
+
+    _weather_weight = 1.0 + (pow(ergodic_err - threshold, 2) * 10.0);
+  
+  } else if(ergodic_err < -threshold){ // i propose less power tha what it's going to be
+
+    _weather_weight = 1.0 - (pow(ergodic_err - threshold, 2) * 10.0);
   }
 
 }

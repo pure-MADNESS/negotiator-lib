@@ -52,8 +52,10 @@ class Negotiator{
     bool get_stab_flag() const { return _local_stab_flag; }
     double get_proposed_power() const { return _proposed_power; }
     double get_ergodic_penalty() const { return _ergodic_weight; }
+    double get_weather_penalty() const { return _weather_weight; }
     void set_weather_flag(bool f) { _weather_flag = f; } // mah, probabilmente può farlo direttamente il nodo senza che se lo gestisca il negoziatore
     void set_required_power(double p) { _required_power = p; }
+    void set_weather_mean(double weather_mean) { _weather_mean = weather_mean; }
 
     void listen(json const &input, string topic);
     json speak();
@@ -82,11 +84,12 @@ class Negotiator{
     double _p_max = 0.0;
     double _covariance = 0.1;
 
+    double _weather_mean = 0.0;
+
     double _weather_weight = 1.0;
     double _ergodic_weight = 1.0;
 
     double _residual;
-    int _id;
 
     bool _weather_flag = true;
 
