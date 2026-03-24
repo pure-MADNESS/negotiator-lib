@@ -21,7 +21,7 @@ Negotiator::~Negotiator(){
 void Negotiator::listen(json const &input, string topic){
 
   // if source node
-  if(topic.rfind("source", 0) == 0){
+  if(topic.rfind("source", 0) == 0 || topic.rfind("accumulator", 0) == 0){
 
     auto iter_sources = _nodes_states.find(topic);
     auto now = steady_clock::now();
@@ -42,8 +42,8 @@ void Negotiator::listen(json const &input, string topic){
       _nodes_states[topic] = new_state;
     }
   
-  // if load node
-  } else if(topic.rfind("load", 0) == 0){
+  // if load node or surplus
+  } else if(topic.rfind("load", 0) == 0 || topic.rfind("accumulator", 0) == 0){
 
     auto iter_loads = _loads_requests.find(topic);
     auto now = steady_clock::now();
@@ -78,6 +78,36 @@ json Negotiator::speak(){
   out["state"]["p_max"] = _p_max;
 
   return out;
+}
+
+double Negotiator::get_other_covariances(){
+
+  double tmp = 0.0;
+  for(auto it = _nodes_states.begin(); it != _nodes_states.end(); ){
+
+    tmp += it -> second._covariance;
+  }
+  return tmp;
+}
+
+double Negotiator::get_other_proposals(){
+
+  double tmp = 0.0;
+  for(auto it = _nodes_states.begin(); it != _nodes_states.end(); ){
+
+    tmp += it -> second._proposed_power;
+  } 
+  return tmp;
+}
+
+double Negotiator::get_tot_requests(){
+
+  double tmp = 0.0;
+  for(auto it = _loads_requests.begin(); it != _loads_requests.end(); ){
+
+    tmp += it -> second._required_power;
+  }
+  return tmp;
 }
 
 void Negotiator::clean_nodes(){

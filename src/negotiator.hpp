@@ -48,11 +48,16 @@ class Negotiator{
 
     void set_cov(double c) { _covariance = c; }
     void set_pmax(double p) { _p_max = p; }
+    double get_pmax() const { return _p_max; }
 
     bool get_stab_flag() const { return _local_stab_flag; }
     double get_proposed_power() const { return _proposed_power; }
     double get_ergodic_penalty() const { return _ergodic_weight; }
     double get_weather_penalty() const { return _weather_weight; }
+    double get_other_covariances();
+    double get_other_proposals();
+    double get_tot_requests();
+    
     void set_weather_flag(bool f) { _weather_flag = f; } // mah, probabilmente può farlo direttamente il nodo senza che se lo gestisca il negoziatore
     void set_required_power(double p) { _required_power = p; }
     void set_weather_mean(double weather_mean) { _weather_mean = weather_mean; }
