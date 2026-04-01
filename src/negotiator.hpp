@@ -57,6 +57,7 @@ class Negotiator{
     double get_other_covariances();
     double get_other_proposals();
     double get_tot_requests();
+    double how_many_accumulators();
     
     void set_weather_flag(bool f) { _weather_flag = f; } // mah, probabilmente può farlo direttamente il nodo senza che se lo gestisca il negoziatore
     void set_required_power(double p) { _required_power = p; }

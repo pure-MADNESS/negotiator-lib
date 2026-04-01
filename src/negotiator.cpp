@@ -110,6 +110,21 @@ double Negotiator::get_tot_requests(){
   return tmp;
 }
 
+double Negotiator::how_many_accumulators(){
+
+  int count = 0;
+
+  for(auto it = _loads_requests.begin(); it != _loads_requests.end(); ) {
+
+    if(it -> first.rfind("accumulator", 0) == 0 && it -> second._required_power < 0.1){
+      count++;
+    }
+  }
+
+  return count;
+}
+
+
 void Negotiator::clean_nodes(){
 
   auto now = std::chrono::steady_clock::now();
