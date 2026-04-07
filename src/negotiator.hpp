@@ -27,6 +27,7 @@ using namespace chrono;
 struct Source_state{ // mainly for neighboors
   double _proposed_power = 0.0;
   double _covariance;
+  double _p_max;
 
   // activation time
   steady_clock::time_point _last_active;    
@@ -55,7 +56,7 @@ class Negotiator{
     double get_ergodic_penalty() const { return _ergodic_weight; }
     double get_weather_penalty() const { return _weather_weight; }
     double get_other_covariances();
-    double get_other_proposals();
+    double get_other_powers();
     double get_tot_requests();
     double how_many_accumulators();
     

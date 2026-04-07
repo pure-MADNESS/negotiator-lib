@@ -30,6 +30,7 @@ void Negotiator::listen(json const &input, string topic){
 
       iter_sources -> second._proposed_power = input.at("state").at("proposed_power").get<double>();
       iter_sources -> second._covariance = input.at("state").at("covariance").get<double>();
+      iter_sources -> second._p_max = input.at("state").at("p_max").get<double>();
       iter_sources -> second._last_active = now;
     
     } else{
@@ -37,6 +38,7 @@ void Negotiator::listen(json const &input, string topic){
       Source_state new_state;
       new_state._proposed_power = input.at("state").at("proposed_power").get<double>();
       new_state._covariance = input.at("state").at("covariance").get<double>();
+      iter_sources -> second._p_max = input.at("state").at("p_max").get<double>();
       new_state._last_active = now;
 
       _nodes_states[topic] = new_state;
@@ -90,12 +92,12 @@ double Negotiator::get_other_covariances(){
   return tmp;
 }
 
-double Negotiator::get_other_proposals(){
+double Negotiator::get_other_powers(){
 
   double tmp = 0.0;
   for(auto it = _nodes_states.begin(); it != _nodes_states.end(); ){
 
-    tmp += it -> second._proposed_power;
+    tmp += it -> second._p_max;
   } 
   return tmp;
 }
