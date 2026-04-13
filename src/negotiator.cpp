@@ -38,7 +38,7 @@ void Negotiator::listen(json const &input, string topic){
       Source_state new_state;
       new_state._proposed_power = input.at("state").at("proposed_power").get<double>();
       new_state._covariance = input.at("state").at("covariance").get<double>();
-      iter_sources -> second._p_max = input.at("state").at("p_max").get<double>();
+      new_state._p_max = input.at("state").at("p_max").get<double>();
       new_state._last_active = now;
 
       _nodes_states[topic] = new_state;
@@ -85,30 +85,32 @@ json Negotiator::speak(){
 double Negotiator::get_other_covariances(){
 
   double tmp = 0.0;
-  for(auto it = _nodes_states.begin(); it != _nodes_states.end(); ){
 
-    tmp += it -> second._covariance;
+  for(auto const& [id, s] : _nodes_states){
+    tmp += s._covariance;
   }
+
   return tmp;
 }
 
 double Negotiator::get_other_powers(){
 
   double tmp = 0.0;
-  for(auto it = _nodes_states.begin(); it != _nodes_states.end(); ){
 
-    tmp += it -> second._p_max;
-  } 
+  for(auto const& [id, s] : _nodes_states){
+    tmp += s._p_max;
+  }
+
   return tmp;
 }
 
 double Negotiator::get_tot_requests(){
-
   double tmp = 0.0;
-  for(auto it = _loads_requests.begin(); it != _loads_requests.end(); ){
 
-    tmp += it -> second._required_power;
+  for(auto const& [id, load] : _loads_requests){
+    tmp += load._required_power;
   }
+
   return tmp;
 }
 
