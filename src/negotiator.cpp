@@ -82,6 +82,15 @@ json Negotiator::speak(){
   return out;
 }
 
+double Negotiator::get_proposed_power(){
+  
+  if(_proposed_power < 0.01){
+    _proposed_power = 0.0;
+  }
+
+  return _proposed_power;
+}
+
 double Negotiator::get_other_covariances(){
 
   double tmp = 0.0;

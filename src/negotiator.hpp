@@ -52,7 +52,7 @@ class Negotiator{
     double get_pmax() const { return _p_max; }
 
     bool get_stab_flag() const { return _local_stab_flag; }
-    double get_proposed_power() const { return _proposed_power; }
+    double get_proposed_power();
     double get_ergodic_penalty() const { return _ergodic_weight; }
     double get_weather_penalty() const { return _weather_weight; }
     double get_other_covariances();
