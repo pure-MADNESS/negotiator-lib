@@ -48,7 +48,7 @@ class Negotiator{
     ~Negotiator();
 
     void set_cov(double c) { _covariance = c; }
-    void set_pmax(double p) { _p_max = p - 3 * _covariance; } // 98% sure to not erogate more than what generated
+    void set_pmax(double p) { _p_max = p;} // 98% sure to not erogate more than what generated
     double get_pmax() const { return _p_max; }
 
     bool get_stab_flag() const { return _local_stab_flag; }
