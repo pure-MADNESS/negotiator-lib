@@ -18,7 +18,7 @@
 #include <chrono>
 
 #define BUFFER_SIZE 10
-#define TIME_SLEEP 30
+#define TIME_SLEEP 10
 
 using namespace std;
 using json = nlohmann::json;

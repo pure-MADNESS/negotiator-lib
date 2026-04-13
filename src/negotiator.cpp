@@ -171,12 +171,18 @@ void Negotiator::update_proposal(){
 
   double tot_weight = 1.0 / _covariance;
   for(auto const &[id, state] : _nodes_states){
-    tot_weight += (1.0 / state._covariance);
+    tot_weight += (state._p_max / (state._covariance + 1e-6));
   }
 
-  double w = (1.0 / _covariance);
+  double w = (_p_max / (_covariance + 1e-6));
 
-  double target = (w / tot_weight) * total_demand;
+  double target = 0.0;
+
+  if(tot_weight > 1e-6){
+    target = (w / tot_weight) * total_demand;
+  } else{
+    target = 0.0;
+  }
 
   if(_weather_flag){
     // weight = weight * _weather_weight;
