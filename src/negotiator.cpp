@@ -169,12 +169,14 @@ void Negotiator::update_proposal(){
     total_demand += load._required_power;
   }
 
-  double tot_weight = 1.0 / _covariance;
+  total_demand = 3000.0;
+
+  double w = (_p_max / (_covariance + 1e-6));
+
+  double tot_weight = w;
   for(auto const &[id, state] : _nodes_states){
     tot_weight += (state._p_max / (state._covariance + 1e-6));
   }
-
-  double w = (_p_max / (_covariance + 1e-6));
 
   double target = 0.0;
 
