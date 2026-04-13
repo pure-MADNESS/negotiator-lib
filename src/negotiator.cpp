@@ -169,8 +169,6 @@ void Negotiator::update_proposal(){
     total_demand += load._required_power;
   }
 
-  total_demand = 3000.0;
-
   double w = (_p_max / (_covariance + 1e-6));
 
   double tot_weight = w;
