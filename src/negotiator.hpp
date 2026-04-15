@@ -83,7 +83,7 @@ class Negotiator{
 
   private:
 
-    const double _threshold = 0.01;
+    const double _threshold = 1.0;
     bool _local_stab_flag = false;
 
     double _proposed_power = 0.0;

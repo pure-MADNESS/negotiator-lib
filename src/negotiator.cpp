@@ -247,7 +247,7 @@ void Negotiator::update_queue(double new_power){
 
       // in base all'errore ergodico, modifichiamo la R delle misurazioni in modo da fidarci sempre meno e alzare la covarianza
       // first try: errore quadratico
-      _ergodic_weight = 1.0 + (pow(ergodic_err - threshold, 2) * 10.0);
+      _ergodic_weight = 1.0 + (pow(ergodic_err - threshold, 2));
     } else{
 
       _ergodic_weight = 1.0;
@@ -260,7 +260,7 @@ void Negotiator::update_queue(double new_power){
   // if i propose more power than what it's going to be
   if(ergodic_err > threshold){
 
-    _weather_weight = 1.0 + (pow(ergodic_err - threshold, 2) * 10.0);
+    _weather_weight = 1.0 + (pow(ergodic_err - threshold, 2));
   
   } else if(ergodic_err < -threshold){ // i propose less power tha what it's going to be
 
