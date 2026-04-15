@@ -41,11 +41,20 @@ void Negotiator::listen(json const &input, string topic){
       new_state._p_max = input.at("state").at("p_max").get<double>();
       new_state._last_active = now;
 
+      if(topic.rfind("accumulator", 0) == 0){
+
+        new_state._acc = true;
+      } else{
+        new_state._acc = false;
+      }
+
       _nodes_states[topic] = new_state;
     }
   
   // if load node or surplus
-  } else if(topic.rfind("load", 0) == 0 || topic.rfind("accumulator", 0) == 0){
+  }
+  
+  if(topic.rfind("load", 0) == 0 || topic.rfind("accumulator", 0) == 0){
 
     auto iter_loads = _loads_requests.find(topic);
     auto now = steady_clock::now();
@@ -64,9 +73,6 @@ void Negotiator::listen(json const &input, string topic){
       _loads_requests[topic] = new_state;
     }
 
-  } else{
-
-    return;
   }
 }
 
@@ -107,7 +113,9 @@ double Negotiator::get_other_powers(){
   double tmp = 0.0;
 
   for(auto const& [id, s] : _nodes_states){
-    tmp += s._p_max;
+    if(!s._acc){
+      tmp += s._p_max;
+    }
   }
 
   return tmp;
@@ -127,9 +135,8 @@ double Negotiator::how_many_accumulators(){
 
   int count = 0;
 
-  for(auto it = _loads_requests.begin(); it != _loads_requests.end(); ) {
-
-    if(it -> first.rfind("accumulator", 0) == 0 && it -> second._required_power < 0.1){
+  for(auto const& [id, load] : _loads_requests) {
+    if(id.rfind("accumulator", 0) == 0){
       count++;
     }
   }
@@ -180,28 +187,32 @@ void Negotiator::update_proposal(){
     total_demand += load._required_power;
   }
 
-  double w = (_p_max / (_covariance + 1e-6));
+  if(!_acc || (get_other_powers() - total_demand < 0.0)){
 
-  double tot_weight = w;
-  for(auto const &[id, state] : _nodes_states){
-    tot_weight += (state._p_max / (state._covariance + 1e-6));
-  }
+    double w = (_p_max / (_covariance + 1e-6));
 
-  double target = 0.0;
+    double tot_weight = w;
+    for(auto const &[id, state] : _nodes_states){
+      tot_weight += (state._p_max / (state._covariance + 1e-6));
+    }
 
-  if(tot_weight > 1e-6){
-    target = (w / tot_weight) * total_demand;
-  } else{
-    target = 0.0;
-  }
+    double target = 0.0;
 
-  if(_weather_flag){
-    // weight = weight * _weather_weight;
-  }
+    if(tot_weight > 1e-6){
+      target = (w / tot_weight) * total_demand;
+    } else{
+      target = 0.0;
+    }
 
-  double correction = 0.25 * (target - _proposed_power);
-  _proposed_power += correction;
-  _proposed_power = std::clamp(_proposed_power, 0.0, _p_max);
+    if(_weather_flag){
+      // weight = weight * _weather_weight;
+    }
+
+    double correction = 0.25 * (target - _proposed_power);
+    _proposed_power += correction;
+    _proposed_power = std::clamp(_proposed_power, 0.0, _p_max);
+
+  } 
 
   if(abs(prev_proposal - _proposed_power) < _threshold){
 

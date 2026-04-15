@@ -28,6 +28,7 @@ struct Source_state{ // mainly for neighboors
   double _proposed_power = 0.0;
   double _covariance;
   double _p_max;
+  bool _acc;
 
   // activation time
   steady_clock::time_point _last_active;    
@@ -47,6 +48,7 @@ class Negotiator{
     Negotiator(double c, double p);
     ~Negotiator();
 
+    void set_acc(bool f) { _acc = f;}
     void set_cov(double c) { _covariance = c; }
     void set_pmax(double p) { _p_max = p;} // 98% sure to not erogate more than what generated
     double get_pmax() const { return _p_max; }
@@ -99,6 +101,7 @@ class Negotiator{
     double _residual;
 
     bool _weather_flag = true;
+    bool _acc = false;
 
     map<string, Source_state> _nodes_states;
     map<string, Load_state> _loads_requests;
