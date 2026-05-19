@@ -210,7 +210,7 @@ void Negotiator::update_proposal(){
 
     double correction = 0.25 * (target - _proposed_power);
     _proposed_power += correction;
-    _proposed_power = std::clamp(_proposed_power, 0.0, _p_max);
+    _proposed_power = std::clamp(_proposed_power, 0.0, _p_max - sqrt(_covariance) * 2);
 
   } 
 
