@@ -55,7 +55,7 @@ class Negotiator{
 
     bool get_stab_flag() const { return _local_stab_flag; }
     double get_proposed_power();
-    double get_ergodic_penalty() const { return _ergodic_weight; }
+    double get_history_penalty() const { return _history_weight; }
     double get_weather_penalty() const { return _weather_weight; }
     double get_other_covariances();
     double get_other_powers();
@@ -96,7 +96,7 @@ class Negotiator{
     double _weather_mean = 0.0;
 
     double _weather_weight = 1.0;
-    double _ergodic_weight = 1.0;
+    double _history_weight = 1.0;
 
     double _residual;
 

@@ -240,42 +240,42 @@ void Negotiator::update_queue(double new_power){
     _buffer_power.pop_front();  // fifo like
   }
 
-  // ergodicity check
-  double ergodic_err = 0.0;
+  // history check
+  double history_err = 0.0;
   double m = 0.0;
   double threshold = _p_max * 0.2;
 
   if(_buffer_power.empty()){
 
-    _ergodic_weight = 1.0;
+    _history_weight = 1.0;
   
   } else{
 
     m = _temporal_sum / _buffer_power.size();
-    ergodic_err = abs(m - _proposed_power);
+    history_err = abs(m - _proposed_power);
 
-    if(ergodic_err > threshold){
+    if(history_err > threshold){
 
-      // in base all'errore ergodico, modifichiamo la R delle misurazioni in modo da fidarci sempre meno e alzare la covarianza
+      // in base all'errore storico, modifichiamo la R delle misurazioni in modo da fidarci sempre meno e alzare la covarianza
       // first try: errore quadratico
-      _ergodic_weight = 1.0 + (pow(ergodic_err - threshold, 2));
+      _history_weight = 1.0 + (pow(history_err - threshold, 2));
     } else{
 
-      _ergodic_weight = 1.0;
+      _history_weight = 1.0;
     }
   }
 
   m = _weather_mean;
-  ergodic_err = _proposed_power - m;
+  history_err = _proposed_power - m;
   
   // if i propose more power than what it's going to be
-  if(ergodic_err > threshold){
+  if(history_err > threshold){
 
-    _weather_weight = 1.0 + (pow(ergodic_err - threshold, 2));
+    _weather_weight = 1.0 + (pow(history_err - threshold, 2));
   
-  } else if(ergodic_err < -threshold){ // i propose less power tha what it's going to be
+  } else if(history_err < -threshold){ // i propose less power tha what it's going to be
 
-    _weather_weight = max(0.8, 1.0 - (pow(ergodic_err - threshold, 2)));
+    _weather_weight = max(0.8, 1.0 - (pow(history_err - threshold, 2)));
   
   } else{
 
