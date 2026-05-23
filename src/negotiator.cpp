@@ -187,7 +187,7 @@ void Negotiator::update_proposal(){
     total_demand += load._required_power;
   }
 
-  if(!_acc || (get_other_powers() - total_demand < 0.0)){
+  if(!_acc && (get_other_powers() - total_demand > 0.0)){
 
     double w = (_p_max / (_covariance + 1e-6));
 
@@ -212,7 +212,10 @@ void Negotiator::update_proposal(){
     _proposed_power += correction;
     _proposed_power = std::clamp(_proposed_power, 0.0, _p_max - sqrt(_covariance) * 2);
 
-  } 
+  }  else{
+
+    _proposed_power = _p_max - sqrt(_covariance) * 2;
+  }
 
   if(abs(prev_proposal - _proposed_power) < _threshold){
 
