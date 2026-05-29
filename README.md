@@ -4,14 +4,14 @@ A decentralized power negotiation library designed for MADNESS' grid source node
 
 ## Overview
 
-The `Negotiator` library implements a **Consensus Balancing Algorithm**. Each source node in the network calculates its own power proposal based on the total demand and the "weights" of all active participants. 
+The `Negotiator` library implements a **Weighted Balancing Algorithm**. Each source node in the network calculates its own power proposal based on the total demand and the "weights" of all active participants. 
 
 ### Consensus Balancing
 Each node $i$ computes its proposed power $P_{prop, i}$ as follows:
 
 $$P_{prop, i} = \left( \frac{w_i}{\sum w_{total}} \right) \cdot P_{demand}$$
 
-Where the weight $w$ is the inverse of the node's covariance ($1/\sigma^2$). This ensures that:
+Where the weight $w$ is the inverse of the node's covariance scaled by the node's maximum available power ($p_{max}/\sigma^2$). This ensures that:
 1. **Reliability-based distribution**: Nodes with lower covariance (higher certainty) take on a larger portion of the load.
 2. **Mathematical Balance**: The sum of all proposals naturally converges to the total demand without a central coordinator.
 
